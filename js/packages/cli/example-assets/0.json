@@ -1,5 +1,5 @@
 {
-  "name": "1",
+  "name": "Sample Receipt",
   "symbol": "",
   "image": "0.png",
   "properties": {
@@ -7,7 +7,7 @@
     "category": "image",
     "creators": [
       {
-        "address": "CV6uQbknPdCVPQunQHqosyvdHJeTuq3629VJdzs8AYjV",
+        "address": "GYTQz1joKPNPMd1sX2nQuDaxs7kETUW51AsUWxTzhwLu",
         "share": 100
       }
     ]
@@ -15,10 +15,10 @@
   "description": "",
   "seller_fee_basis_points": 500,
   "attributes": [
-    { "trait_type": "background", "value": "blue" },
-    { "trait_type": "eyes", "value": "star-eyes" },
-    { "trait_type": "mouth", "value": "triangle-mouth" },
-    { "trait_type": "face", "value": "teal-face" }
+    { "trait_type": "main", "value": "fish burger" },
+    { "trait_type": "sides", "value": "fish & chips" },
+    { "trait_type": "drink", "value": "coke" },
+    { "trait_type": "total", "value": "41.29" }
   ],
   "collection": {}
 }

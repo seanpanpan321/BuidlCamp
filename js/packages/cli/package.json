@@ -37,6 +37,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.36.0",
     "@bundlr-network/client": "^0.5.18",
+    "@metaplex-foundation/mpl-token-metadata": "1.2.5",
     "@metaplex/arweave-cost": "^1.0.4",
     "@nftstorage/metaplex-auth": "^1.2.0",
     "@project-serum/anchor": "^0.17.0",
@@ -55,13 +56,13 @@
     "loglevel": "^1.7.1",
     "mime": "^3.0.0",
     "node-fetch": "^2.6.1",
-    "weighted": "^0.3.0",
-    "@metaplex-foundation/mpl-token-metadata": "1.2.5"
+    "weighted": "^0.3.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.15.6",
     "@babel/preset-typescript": "^7.15.0",
     "@types/jest": "^27.0.1",
+    "@types/node": "^18.11.9",
     "@types/webgl2": "^0.0.6",
     "jest": "^27.4.5",
     "typescript": "^4.3.5"

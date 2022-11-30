@@ -45,7 +45,7 @@ export const deserializeAccount = (data: Buffer) => {
 
   if (accountInfo.delegateOption === 0) {
     accountInfo.delegate = null;
-    accountInfo.delegatedAmount = new u64(0);
+    accountInfo.delegatedAmount = new u64();
   } else {
     accountInfo.delegate = new PublicKey(accountInfo.delegate);
     accountInfo.delegatedAmount = u64.fromBuffer(accountInfo.delegatedAmount);

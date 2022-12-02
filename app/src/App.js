@@ -16,12 +16,16 @@ import {
 } from "web3uikit";
 import SolanaNFTCard from "./components/SolanaNFTCard";
 import MoralisLogo from "./assets/moralis_logo.jpeg";
+import wallet from "./library/wallet"
+
 
 const { Col } = Row;
 
 const App = () => {
   const [chain, setChain] = useState("devnet");
+  const [testLabel, setTestLabel] = useState("");
   const SolanaApi = useMoralisSolanaApi();
+  const [walletAddress, setWalletAddress] = useState(null);
   const {
     user,
     isInitialized,
@@ -33,6 +37,8 @@ const App = () => {
     enableWeb3,
     logout,
   } = useMoralis();
+  
+
 
   const { data } = useMoralisSolanaCall(
     SolanaApi?.account?.getNFTs,
@@ -61,6 +67,33 @@ const App = () => {
     isWeb3EnableLoading,
     isWeb3Enabled,
   ]);
+
+  window.onload = async function(){
+    try{
+      if (window.solana){
+        const solana = window.solana;
+        if (solana.isPhantom) {
+          setTestLabel(testLabel + "Phantom Wallet found");
+          const res = await solana.connect({onlyIfTrusted: true})
+          setTestLabel(testLabel + res.publicKey.toString())
+          setWalletAddress(res.publicKey.toString());
+        }
+      }
+    }
+    catch (error){
+      setTestLabel(testLabel + "Not found");
+    }
+  }
+
+  const connectWallet = async()=>{
+    if (window.solana){
+      const solana = window.solana;
+      const res = await solana.connect();
+      setWalletAddress(res.publicKey.toString())
+    }else{
+      setTestLabel(testLabel + "Not found");
+    }
+  }
 
   return (
     <Row alignItems="center" justifyItems="center">
@@ -143,7 +176,7 @@ const App = () => {
         </>
       ) : (
         <>
-          <Col isFullWidth style={{ marginTop: "7rem" }}>
+          {/* <Col isFullWidth style={{ marginTop: "7rem" }}>
             <Row alignItems="center" justifyItems="center">
               <p style={{ textAlign: "center", fontSize: "64px" }}>
                 <b>Solana NFT Dashboard</b>
@@ -157,7 +190,34 @@ const App = () => {
                 height="auto"
               />
             </Row>
-          </Col>
+          </Col> */
+          <div>
+            <Row>
+              {testLabel}
+            </Row>
+            {!walletAddress && (
+              <div>
+                <Button
+                  icon = "solana"
+                  size="large"
+                  text = "Connect Wallet"
+                  theme = "primary"
+                  type = "button"
+                  onClick={connectWallet}
+                  style = {{height: "56px"}}
+                />
+              </div>
+            )}
+            {walletAddress && (
+              <div>
+                  <p>
+                    Connected account : {' '}
+                    <span className = "address"> {walletAddress}</span>
+                  </p>
+              </div>
+            )}
+          </div>
+          }
         </>
       )}
     </Row>

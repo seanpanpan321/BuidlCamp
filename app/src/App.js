@@ -17,7 +17,10 @@ import {
 import SolanaNFTCard from "./components/SolanaNFTCard";
 import MoralisLogo from "./assets/moralis_logo.jpeg";
 import wallet from "./library/wallet"
+import {LAMPORTS_PER_SOL} from "@solana/web3.js";
 
+
+const web3 = require("@solana/web3.js")
 
 const { Col } = Row;
 
@@ -27,6 +30,7 @@ const App = () => {
   const SolanaApi = useMoralisSolanaApi();
   const [walletAddress, setWalletAddress] = useState(null);
   const [output, setOutput] = useState("");
+  const [output2, setOutput2] = useState("");
   var wallet = null;
   const {
     user,
@@ -79,6 +83,13 @@ const App = () => {
           const res = await solana.connect({onlyIfTrusted: true})
           wallet = res;
           setOutput(res);
+          var connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed');
+          connection.getBalance(res.publicKey).then(function(value) 
+            { 
+              var balance = value/LAMPORTS_PER_SOL;
+              setOutput2(balance);
+            }
+          )
           setTestLabel(testLabel + res.publicKey.toString())
           setWalletAddress(res.publicKey.toString());
         }
@@ -220,6 +231,9 @@ const App = () => {
                     <span className = "address"> {walletAddress}</span>
                     <p>
                       ABC {JSON.stringify(output)}
+                    </p>
+                    <p>
+                      Balance: {JSON.stringify(output2)}
                     </p>
                   </p>
               </div>

@@ -26,6 +26,8 @@ const App = () => {
   const [testLabel, setTestLabel] = useState("");
   const SolanaApi = useMoralisSolanaApi();
   const [walletAddress, setWalletAddress] = useState(null);
+  const [output, setOutput] = useState("");
+  var wallet = null;
   const {
     user,
     isInitialized,
@@ -75,6 +77,8 @@ const App = () => {
         if (solana.isPhantom) {
           setTestLabel(testLabel + "Phantom Wallet found");
           const res = await solana.connect({onlyIfTrusted: true})
+          wallet = res;
+          setOutput(res);
           setTestLabel(testLabel + res.publicKey.toString())
           setWalletAddress(res.publicKey.toString());
         }
@@ -89,6 +93,7 @@ const App = () => {
     if (window.solana){
       const solana = window.solana;
       const res = await solana.connect();
+      setOutput(res);
       setWalletAddress(res.publicKey.toString())
     }else{
       setTestLabel(testLabel + "Not found");
@@ -213,9 +218,13 @@ const App = () => {
                   <p>
                     Connected account : {' '}
                     <span className = "address"> {walletAddress}</span>
+                    <p>
+                      ABC {JSON.stringify(output)}
+                    </p>
                   </p>
               </div>
             )}
+
           </div>
           }
         </>

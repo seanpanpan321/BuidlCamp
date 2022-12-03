@@ -29,8 +29,10 @@ const App = () => {
   const [testLabel, setTestLabel] = useState("");
   const SolanaApi = useMoralisSolanaApi();
   const [walletAddress, setWalletAddress] = useState(null);
-  const [output, setOutput] = useState("");
-  const [output2, setOutput2] = useState("");
+  const [walletObj, setWalletObj] = useState(null);
+  const [balance, setBalance] = useState("");
+  const [connection, setConn] = useState(null);
+  const [temp, setTemp] = useState(null); 
   var wallet = null;
   const {
     user,
@@ -76,22 +78,11 @@ const App = () => {
 
   window.onload = async function(){
     try{
+      setWalletObj(null);
       if (window.solana){
         const solana = window.solana;
         if (solana.isPhantom) {
           setTestLabel(testLabel + "Phantom Wallet found");
-          const res = await solana.connect({onlyIfTrusted: true})
-          wallet = res;
-          setOutput(res);
-          var connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed');
-          connection.getBalance(res.publicKey).then(function(value) 
-            { 
-              var balance = value/LAMPORTS_PER_SOL;
-              setOutput2(balance);
-            }
-          )
-          setTestLabel(testLabel + res.publicKey.toString())
-          setWalletAddress(res.publicKey.toString());
         }
       }
     }
@@ -104,11 +95,51 @@ const App = () => {
     if (window.solana){
       const solana = window.solana;
       const res = await solana.connect();
-      setOutput(res);
-      setWalletAddress(res.publicKey.toString())
+      setWalletObj(res);
+      setWalletAddress(res.publicKey.toString());
+      let connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed');
+      setConn(connection);
+      connection.getBalance(res.publicKey)
+      .then((value) => { 
+          var balance = value/LAMPORTS_PER_SOL;
+          setBalance(balance);
+        }
+      );
+      setTestLabel(testLabel + res.publicKey.toString())
+      setWalletAddress(res.publicKey.toString());
     }else{
       setTestLabel(testLabel + "Not found");
     }
+  }
+
+  const checkout = async () => {
+    let fromKeypair = web3.Keypair.generate();
+    let toKeypair = web3.Keypair.generate();
+    const transaction = new web3.Transaction();
+    transaction.add(
+      web3.SystemProgram.transfer({
+        fromPubkey: fromKeypair.publicKey,
+        toPubkey: toKeypair.publicKey,
+        lamports: web3.LAMPORTS_PER_SOL / 100,
+      }),
+    );
+    
+    // Sign transaction, broadcast, and confirm
+    const signature = await web3.sendAndConfirmTransaction(
+      connection,
+      transaction,
+      [fromKeypair],
+    );
+
+    console.log({ connection });
+    // console.log('SIGNATURE', signature);
+
+    // let airdropSignature = await connection.requestAirdrop(
+    //   payer.publicKey,
+    //   web3.LAMPORTS_PER_SOL,
+    // );
+    
+    await connection.confirmTransaction({ signature });
   }
 
   return (
@@ -209,7 +240,8 @@ const App = () => {
           </Col> */
           <div>
             <Row>
-              {testLabel}
+              <label>Here</label>
+              <label>{ JSON.stringify(walletObj) }</label>
             </Row>
             {!walletAddress && (
               <div>
@@ -224,16 +256,27 @@ const App = () => {
                 />
               </div>
             )}
+            <div>
+              <Button
+                icon = "solana"
+                size="large"
+                text = "Pay"
+                theme = "primary"
+                type = "button"
+                onClick={checkout}
+                style = {{height: "56px"}}
+              />
+            </div>
             {walletAddress && (
               <div>
                   <p>
                     Connected account : {' '}
                     <span className = "address"> {walletAddress}</span>
                     <p>
-                      ABC {JSON.stringify(output)}
+                      ABC {JSON.stringify(walletObj)}
                     </p>
                     <p>
-                      Balance: {JSON.stringify(output2)}
+                      Balance: {JSON.stringify(balance)}
                     </p>
                   </p>
               </div>

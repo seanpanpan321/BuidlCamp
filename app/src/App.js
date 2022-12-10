@@ -99,9 +99,9 @@ const App = () => {
       setWalletAddress(res.publicKey.toString());
       let connection = new web3.Connection(web3.clusterApiUrl('devnet'), 'confirmed');
       setConn(connection);
-      connection.getBalance(res.publicKey)
+      const value = connection.getBalance(res.publicKey)
       .then((value) => { 
-          var balance = value/LAMPORTS_PER_SOL;
+          const balance = value/LAMPORTS_PER_SOL;
           setBalance(balance);
         }
       );
@@ -114,7 +114,17 @@ const App = () => {
 
   const checkout = async () => {
     let fromKeypair = web3.Keypair.generate();
-    let toKeypair = web3.Keypair.generate();
+    let toKeypair = {
+      publicKey: "DxefcmSRS6AEk2TjqNUokij4jJYqh3dSQQrw9yaZAjxk",
+      secretKey: 'shit'
+  };
+
+    const airdropSignature = await connection.requestAirdrop(
+      fromKeypair.publicKey,
+      web3.LAMPORTS_PER_SOL,
+    );
+    await connection.confirmTransaction(airdropSignature);
+  
     const transaction = new web3.Transaction();
     transaction.add(
       web3.SystemProgram.transfer({
@@ -124,6 +134,11 @@ const App = () => {
       }),
     );
     
+    // let airdropSignature = await connection.requestAirdrop(
+    //   fromKeypair.publicKey,
+    //   web3.LAMPORTS_PER_SOL,
+    // );
+    
     // Sign transaction, broadcast, and confirm
     const signature = await web3.sendAndConfirmTransaction(
       connection,
@@ -131,13 +146,6 @@ const App = () => {
       [fromKeypair],
     );
 
-    console.log({ connection });
-    // console.log('SIGNATURE', signature);
-
-    // let airdropSignature = await connection.requestAirdrop(
-    //   payer.publicKey,
-    //   web3.LAMPORTS_PER_SOL,
-    // );
     
     await connection.confirmTransaction({ signature });
   }
@@ -273,7 +281,7 @@ const App = () => {
                     Connected account : {' '}
                     <span className = "address"> {walletAddress}</span>
                     <p>
-                      ABC {JSON.stringify(walletObj)}
+                      Connection: {JSON.stringify(connection.toString())}
                     </p>
                     <p>
                       Balance: {JSON.stringify(balance)}
